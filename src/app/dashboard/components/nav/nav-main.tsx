@@ -4,20 +4,58 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { Tag as TagMenuIcon, TagsIcon, WalletIcon } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
+} from "@/components/ui/sidebar";
+import {
+  CircleDollarSignIcon,
+  CreditCardIcon,
+  Tag as TagMenuIcon,
+  TagsIcon,
+  TrendingDownIcon,
+  WalletIcon,
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 export function NavMain() {
-  const { pathname } = useLocation()
-  const contasActive = pathname === "/dashboard/platform/contas"
-  const categoriasActive = pathname === "/dashboard/platform/categorias"
-  const tagsActive = pathname === "/dashboard/platform/tags"
+  const { pathname } = useLocation();
+  const receitasActive = pathname === "/dashboard/platform/receitas";
+  const despesasActive = pathname === "/dashboard/platform/despesas";
+  const despesasCartaoActive = pathname === "/dashboard/platform/despesas-cartao";
+  const contasActive = pathname === "/dashboard/platform/contas";
+  const categoriasActive = pathname === "/dashboard/platform/categorias";
+  const tagsActive = pathname === "/dashboard/platform/tags";
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Receitas" isActive={receitasActive}>
+            <Link to="/dashboard/platform/receitas">
+              <CircleDollarSignIcon className="size-4" />
+              <span>Receitas</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Despesas" isActive={despesasActive}>
+            <Link to="/dashboard/platform/despesas">
+              <TrendingDownIcon className="size-4" />
+              <span>Despesas</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            asChild
+            tooltip="Despesas cartão de crédito"
+            isActive={despesasCartaoActive}
+          >
+            <Link to="/dashboard/platform/despesas-cartao">
+              <CreditCardIcon className="size-4" />
+              <span>Despesas cartão de crédito</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Contas" isActive={contasActive}>
             <Link to="/dashboard/platform/contas">
@@ -44,5 +82,5 @@ export function NavMain() {
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
