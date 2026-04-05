@@ -83,7 +83,11 @@ export function ViewCategoryDrawerContent({
           <FieldLabel>Logo</FieldLabel>
           {logo ? (
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/30 p-3">
-              <LogoSvgPreview svg={logo.svg} className="h-12 w-20" />
+              <LogoSvgPreview
+                svg={logo.svg}
+                className="h-12 w-20"
+                isIcon={logo.isIcon ?? true}
+              />
               <span className="text-sm font-medium text-foreground">{logo.name}</span>
             </div>
           ) : (

@@ -4,11 +4,13 @@ export type Logo = {
   uuid: string;
   name: string;
   svg: string;
+  isIcon: boolean;
 };
 
 export type CreateLogoPayload = {
   name: string;
   svg: string;
+  isIcon: boolean;
 };
 
 export const createLogoSchema = z.object({
@@ -17,6 +19,7 @@ export const createLogoSchema = z.object({
     .string()
     .min(1, "Cole o SVG")
     .refine((s) => /<svg\b/i.test(s.trim()), "Inclua um documento SVG válido (tag svg)"),
+  isIcon: z.boolean(),
 });
 
 export type CreateLogoFormValues = z.infer<typeof createLogoSchema>;

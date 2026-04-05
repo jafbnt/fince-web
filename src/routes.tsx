@@ -7,6 +7,7 @@ import { ColorSystemView } from "@/app/dashboard/components/system/color";
 import { LogoSystemView } from "@/app/dashboard/components/system/logo";
 import { AccountTypeSystemView } from "@/app/dashboard/components/system/account-type";
 import { BankSystemView } from "@/app/dashboard/components/system/bank";
+import { AccountPlatformView } from "@/app/dashboard/components/platform/account";
 import { CategoryPlatformView } from "@/app/dashboard/components/platform/category";
 import { TagPlatformView } from "@/app/dashboard/components/platform/tag";
 import { FlagSystemView } from "@/app/dashboard/components/system/flag";
@@ -55,6 +56,7 @@ export const router = createBrowserRouter([
           { path: "system/bandeiras", element: createElement(FlagSystemView) },
           { path: "system/bancos", element: createElement(BankSystemView) },
           { path: "system/tipos-de-conta", element: createElement(AccountTypeSystemView) },
+          { path: "platform/contas", element: createElement(AccountPlatformView) },
           { path: "platform/categorias", element: createElement(CategoryPlatformView) },
           { path: "platform/tags", element: createElement(TagPlatformView) },
         ],

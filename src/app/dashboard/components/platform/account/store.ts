@@ -8,25 +8,25 @@ import {
 } from "@/lib/api-envelope";
 import { showApiMessage } from "@/components/shared/show-api-message";
 import { toast } from "sonner";
-import type { CreateLogoPayload, Logo } from "./type";
+import type { Account, CreateAccountPayload } from "./type";
 
-type LogoStore = {
-  logos: Logo[];
+type AccountStore = {
+  accounts: Account[];
   loadingList: boolean;
   loadingCreate: boolean;
   errorCreate: string | null;
   loadingUpdate: boolean;
   errorUpdate: string | null;
   loadingDeleteUuid: string | null;
-  fetchLogos: () => Promise<void>;
-  fetchLogoByUuid: (uuid: string) => Promise<Logo | null>;
-  createLogo: (payload: CreateLogoPayload) => Promise<boolean>;
-  updateLogo: (uuid: string, payload: CreateLogoPayload) => Promise<boolean>;
-  deleteLogo: (uuid: string) => Promise<boolean>;
+  fetchAccounts: () => Promise<void>;
+  fetchAccountByUuid: (uuid: string) => Promise<Account | null>;
+  createAccount: (payload: CreateAccountPayload) => Promise<boolean>;
+  updateAccount: (uuid: string, payload: CreateAccountPayload) => Promise<boolean>;
+  deleteAccount: (uuid: string) => Promise<boolean>;
 };
 
 const defaultState = {
-  logos: [] as Logo[],
+  accounts: [] as Account[],
   loadingList: false,
   loadingCreate: false,
   errorCreate: null as string | null,
@@ -35,17 +35,17 @@ const defaultState = {
   loadingDeleteUuid: null as string | null,
 };
 
-export const useLogoStore = create<LogoStore>((set, get) => ({
+export const useAccountStore = create<AccountStore>((set, get) => ({
   ...defaultState,
 
-  fetchLogos: async (): Promise<void> => {
+  fetchAccounts: async (): Promise<void> => {
     set({ loadingList: true });
 
     await new ClientHttp().get<unknown, ApiErrorEnvelope>(
-      "/api/logos",
+      "/api/accounts",
       (result: unknown) => {
-        if (isApiSuccess<Logo[]>(result) && Array.isArray(result.body)) {
-          set({ logos: result.body });
+        if (isApiSuccess<Account[]>(result) && Array.isArray(result.body)) {
+          set({ accounts: result.body });
           return;
         }
         if (isApiErrorEnvelope(result)) {
@@ -63,12 +63,12 @@ export const useLogoStore = create<LogoStore>((set, get) => ({
     );
   },
 
-  fetchLogoByUuid: async (uuid: string): Promise<Logo | null> => {
-    return await new Promise<Logo | null>((resolve) => {
+  fetchAccountByUuid: async (uuid: string): Promise<Account | null> => {
+    return await new Promise<Account | null>((resolve) => {
       void new ClientHttp().get<unknown, ApiErrorEnvelope>(
-        `/api/logos/${uuid}`,
+        `/api/accounts/${uuid}`,
         (result: unknown) => {
-          if (isApiSuccess<Logo>(result)) {
+          if (isApiSuccess<Account>(result)) {
             resolve(result.body);
             return;
           }
@@ -89,21 +89,21 @@ export const useLogoStore = create<LogoStore>((set, get) => ({
     });
   },
 
-  createLogo: async (payload: CreateLogoPayload): Promise<boolean> => {
+  createAccount: async (payload: CreateAccountPayload): Promise<boolean> => {
     set({ loadingCreate: true, errorCreate: null });
 
     return await new Promise<boolean>((resolve) => {
-      void new ClientHttp().post<unknown, ApiErrorEnvelope, CreateLogoPayload>(
-        "/api/logos",
+      void new ClientHttp().post<unknown, ApiErrorEnvelope, CreateAccountPayload>(
+        "/api/accounts",
         payload,
         (result: unknown) => {
-          if (isApiSuccess<Logo>(result)) {
+          if (isApiSuccess<Account>(result)) {
             const created = result.body;
             set({
               errorCreate: null,
-              logos: [created, ...get().logos.filter((l) => l.uuid !== created.uuid)],
+              accounts: [created, ...get().accounts.filter((a) => a.uuid !== created.uuid)],
             });
-            showApiMessage(result, { successMessage: "Logo cadastrado com sucesso!" });
+            showApiMessage(result, { successMessage: "Conta cadastrada com sucesso!" });
             resolve(true);
             return;
           }
@@ -131,21 +131,21 @@ export const useLogoStore = create<LogoStore>((set, get) => ({
     });
   },
 
-  updateLogo: async (uuid: string, payload: CreateLogoPayload): Promise<boolean> => {
+  updateAccount: async (uuid: string, payload: CreateAccountPayload): Promise<boolean> => {
     set({ loadingUpdate: true, errorUpdate: null });
 
     return await new Promise<boolean>((resolve) => {
-      void new ClientHttp().patch<unknown, ApiErrorEnvelope, CreateLogoPayload>(
-        `/api/logos/${uuid}`,
+      void new ClientHttp().put<unknown, ApiErrorEnvelope, CreateAccountPayload>(
+        `/api/accounts/${uuid}`,
         payload,
         (result: unknown) => {
-          if (isApiSuccess<Logo>(result)) {
+          if (isApiSuccess<Account>(result)) {
             const updated = result.body;
             set({
               errorUpdate: null,
-              logos: get().logos.map((l) => (l.uuid === updated.uuid ? updated : l)),
+              accounts: get().accounts.map((a) => (a.uuid === updated.uuid ? updated : a)),
             });
-            showApiMessage(result, { successMessage: "Logo atualizado com sucesso!" });
+            showApiMessage(result, { successMessage: "Conta atualizada com sucesso!" });
             resolve(true);
             return;
           }
@@ -173,23 +173,23 @@ export const useLogoStore = create<LogoStore>((set, get) => ({
     });
   },
 
-  deleteLogo: async (uuid: string): Promise<boolean> => {
+  deleteAccount: async (uuid: string): Promise<boolean> => {
     set({ loadingDeleteUuid: uuid });
 
     return await new Promise<boolean>((resolve) => {
       void new ClientHttp().delete<unknown, ApiErrorEnvelope>(
-        `/api/logos/${uuid}`,
+        `/api/accounts/${uuid}`,
         (result: unknown) => {
           if (isApiErrorEnvelope(result)) {
             showApiMessage(result);
             resolve(false);
             return;
           }
-          set({ logos: get().logos.filter((l) => l.uuid !== uuid) });
+          set({ accounts: get().accounts.filter((a) => a.uuid !== uuid) });
           if (isApiSuccess(result)) {
-            showApiMessage(result, { successMessage: "Logo excluído com sucesso." });
+            showApiMessage(result, { successMessage: "Conta excluída com sucesso." });
           } else {
-            toast.success("Logo excluído com sucesso.");
+            toast.success("Conta excluída com sucesso.");
           }
           resolve(true);
         },

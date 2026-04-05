@@ -64,6 +64,7 @@ export function LogosTable() {
           <thead>
             <tr className="border-b border-border bg-muted/40">
               <th className="px-4 py-3 text-left font-medium text-foreground">Nome</th>
+              <th className="px-4 py-3 text-left font-medium text-foreground">Ícone</th>
               <th className="px-4 py-3 text-left font-medium text-foreground">SVG</th>
               <th className="px-4 py-3 text-left font-medium text-foreground">Miniatura</th>
               <th className="px-4 py-3 text-right font-medium text-foreground">Ações</th>
@@ -78,13 +79,16 @@ export function LogosTable() {
                   className="border-b border-border last:border-0 hover:bg-muted/30"
                 >
                   <td className="px-4 py-3 font-medium text-foreground">{row.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {row.isIcon ?? true ? "Sim" : "Não"}
+                  </td>
                   <td className="max-w-[220px] px-4 py-3">
                     <code className="block break-all font-mono text-xs text-muted-foreground">
                       {truncateSvgInline(row.svg)}
                     </code>
                   </td>
                   <td className="px-4 py-3">
-                    <LogoSvgPreview svg={row.svg} />
+                    <LogoSvgPreview svg={row.svg} isIcon={row.isIcon ?? true} />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">

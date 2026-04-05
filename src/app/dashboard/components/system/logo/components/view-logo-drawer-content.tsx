@@ -64,8 +64,17 @@ export function ViewLogoDrawerContent({ logoUuid, onClose }: ViewLogoDrawerConte
           <Input id="view-logo-name" readOnly disabled value={logo.name} />
         </Field>
         <Field>
+          <FieldLabel htmlFor="view-logo-is-icon">Ícone</FieldLabel>
+          <Input
+            id="view-logo-is-icon"
+            readOnly
+            disabled
+            value={logo.isIcon ? "Sim (monocromático)" : "Não (colorido)"}
+          />
+        </Field>
+        <Field>
           <FieldLabel>Miniatura</FieldLabel>
-          <LogoSvgPreview svg={logo.svg} className="h-16 w-32" />
+          <LogoSvgPreview svg={logo.svg} className="h-16 w-32" isIcon={logo.isIcon ?? true} />
         </Field>
         <Field>
           <FieldLabel htmlFor="view-logo-svg">SVG</FieldLabel>

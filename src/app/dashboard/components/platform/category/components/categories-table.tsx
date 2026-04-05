@@ -84,7 +84,7 @@ export function CategoriesTable() {
                   <td className="px-4 py-3">
                     {logo ? (
                       <div className="flex items-center gap-3">
-                        <LogoSvgPreview svg={logo.svg} />
+                        <LogoSvgPreview svg={logo.svg} isIcon={logo.isIcon ?? true} />
                         <span className="text-muted-foreground">{logo.name}</span>
                       </div>
                     ) : (

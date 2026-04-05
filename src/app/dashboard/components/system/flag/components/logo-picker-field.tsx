@@ -68,7 +68,11 @@ export function LogoPickerField<T extends FieldValues>({
                       disabled && "pointer-events-none opacity-50",
                     )}
                   >
-                    <LogoSvgPreview svg={logo.svg} className="h-10 w-16 shrink-0" />
+                    <LogoSvgPreview
+                      svg={logo.svg}
+                      className="h-10 w-16 shrink-0"
+                      isIcon={logo.isIcon ?? true}
+                    />
                     <span className="min-w-0 font-medium text-foreground">{logo.name}</span>
                   </button>
                 );

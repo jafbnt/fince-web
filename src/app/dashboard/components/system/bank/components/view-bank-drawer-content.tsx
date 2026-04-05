@@ -77,7 +77,11 @@ export function ViewBankDrawerContent({ bankUuid, onClose }: ViewBankDrawerConte
           <FieldLabel>Logo</FieldLabel>
           {linkedLogo ? (
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/30 p-3">
-              <LogoSvgPreview svg={linkedLogo.svg} className="h-12 w-20" />
+              <LogoSvgPreview
+                svg={linkedLogo.svg}
+                className="h-12 w-20"
+                isIcon={linkedLogo.isIcon ?? true}
+              />
               <span className="text-sm font-medium text-foreground">{linkedLogo.name}</span>
             </div>
           ) : (

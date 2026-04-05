@@ -20,6 +20,7 @@ const pathTitles: Record<string, string> = {
   "/dashboard/system/bandeiras": "Bandeiras",
   "/dashboard/system/bancos": "Bancos",
   "/dashboard/system/tipos-de-conta": "Tipos de Conta",
+  "/dashboard/platform/contas": "Contas",
   "/dashboard/platform/categorias": "Categorias",
   "/dashboard/platform/tags": "Tags",
 };
