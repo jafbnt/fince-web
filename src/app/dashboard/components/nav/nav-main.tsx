@@ -13,7 +13,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { ChevronRightIcon } from "lucide-react"
+import { ChevronRightIcon, TagsIcon } from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
 
 export function NavMain({
   items,
@@ -29,10 +30,21 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const { pathname } = useLocation()
+  const categoriasActive = pathname === "/dashboard/platform/categorias"
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Categorias" isActive={categoriasActive}>
+            <Link to="/dashboard/platform/categorias">
+              <TagsIcon className="size-4" />
+              <span>Categorias</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         {items.map((item) => (
           <Collapsible
             key={item.title}

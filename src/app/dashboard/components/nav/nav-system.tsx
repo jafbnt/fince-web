@@ -8,13 +8,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { FlagIcon, ImageIcon, PaletteIcon, ShapesIcon } from "lucide-react";
+import { Building2Icon, FlagIcon, ImageIcon, PaletteIcon, ShapesIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { title: "Cores", url: "/dashboard/system/cores", icon: PaletteIcon },
   { title: "Logos", url: "/dashboard/system/logos", icon: ImageIcon },
   { title: "Bandeiras", url: "/dashboard/system/bandeiras", icon: FlagIcon },
+  { title: "Bancos", url: "/dashboard/system/bancos", icon: Building2Icon },
   { title: "Tipos de Conta", url: "/dashboard/system/tipos-de-conta", icon: ShapesIcon },
 ] as const;
 

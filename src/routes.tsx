@@ -6,6 +6,8 @@ import { DashboardLayout } from "@/app/dashboard";
 import { ColorSystemView } from "@/app/dashboard/components/system/color";
 import { LogoSystemView } from "@/app/dashboard/components/system/logo";
 import { AccountTypeSystemView } from "@/app/dashboard/components/system/account-type";
+import { BankSystemView } from "@/app/dashboard/components/system/bank";
+import { CategoryPlatformView } from "@/app/dashboard/components/platform/category";
 import { FlagSystemView } from "@/app/dashboard/components/system/flag";
 
 function PublicOnlyRoute(): ReactElement {
@@ -50,7 +52,9 @@ export const router = createBrowserRouter([
           { path: "system/cores", element: createElement(ColorSystemView) },
           { path: "system/logos", element: createElement(LogoSystemView) },
           { path: "system/bandeiras", element: createElement(FlagSystemView) },
+          { path: "system/bancos", element: createElement(BankSystemView) },
           { path: "system/tipos-de-conta", element: createElement(AccountTypeSystemView) },
+          { path: "platform/categorias", element: createElement(CategoryPlatformView) },
         ],
       },
     ],

@@ -18,7 +18,9 @@ const pathTitles: Record<string, string> = {
   "/dashboard/system/cores": "Cores",
   "/dashboard/system/logos": "Logos",
   "/dashboard/system/bandeiras": "Bandeiras",
+  "/dashboard/system/bancos": "Bancos",
   "/dashboard/system/tipos-de-conta": "Tipos de Conta",
+  "/dashboard/platform/categorias": "Categorias",
 };
 
 function breadcrumbForPath(pathname: string): { parent?: string; current: string } {
@@ -26,6 +28,12 @@ function breadcrumbForPath(pathname: string): { parent?: string; current: string
     return {
       parent: "Sistema",
       current: pathTitles[pathname] ?? "Sistema",
+    };
+  }
+  if (pathname.startsWith("/dashboard/platform/")) {
+    return {
+      parent: "Plataforma",
+      current: pathTitles[pathname] ?? "Plataforma",
     };
   }
   return { current: pathTitles[pathname] ?? "Painel" };
