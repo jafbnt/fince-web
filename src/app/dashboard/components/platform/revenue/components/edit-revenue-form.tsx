@@ -14,6 +14,7 @@ import {
   createRevenueSchema,
   type CreateRevenueFormValues,
   formValuesToRevenuePayload,
+  revenueNeedsDetailFetchForForm,
   revenueToFormDefaults,
   type Revenue,
 } from "../type";
@@ -39,7 +40,9 @@ export function EditRevenueForm({
   const errorUpdate = useRevenueStore((s) => s.errorUpdate);
   const accountsCount = useAccountStore((s) => s.accounts.length);
   const categoriesCount = useCategoryStore((s) => s.categories.length);
-  const [prefillReady, setPrefillReady] = useState(Boolean(initialRevenue));
+  const [prefillReady, setPrefillReady] = useState(
+    () => Boolean(initialRevenue && !revenueNeedsDetailFetchForForm(initialRevenue)),
+  );
   const [prefillError, setPrefillError] = useState(false);
 
   const {
@@ -74,7 +77,10 @@ export function EditRevenueForm({
   }, []);
 
   useEffect(() => {
-    if (initialRevenue) {
+    const useInitialWithoutFetch =
+      initialRevenue !== undefined && !revenueNeedsDetailFetchForForm(initialRevenue);
+
+    if (useInitialWithoutFetch) {
       reset(revenueToFormDefaults(initialRevenue));
       setPrefillReady(true);
       setPrefillError(false);

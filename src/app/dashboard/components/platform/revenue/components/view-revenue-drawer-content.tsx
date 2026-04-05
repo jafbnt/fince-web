@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { LogoSvgPreview } from "../../../system/logo/components/logo-svg-preview";
 import { useAccountStore } from "../../account/store";
 import { useCategoryStore } from "../../category/store";
+import { useTagStore } from "../../tag/store";
 import { EditRevenueForm } from "./edit-revenue-form";
 import { useRevenueStore } from "../store";
 import { revenueApiAmountToReais, type Revenue } from "../type";
@@ -23,6 +25,7 @@ export function ViewRevenueDrawerContent({ revenueUuid, onClose }: ViewRevenueDr
   const fetchRevenueByUuid = useRevenueStore((s) => s.fetchRevenueByUuid);
   const categories = useCategoryStore((s) => s.categories);
   const accounts = useAccountStore((s) => s.accounts);
+  const tags = useTagStore((s) => s.tags);
   const [revenue, setRevenue] = useState<Revenue | null>(null);
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState<"view" | "edit">("view");
@@ -60,8 +63,13 @@ export function ViewRevenueDrawerContent({ revenueUuid, onClose }: ViewRevenueDr
     );
   }
 
-  const categoryNome = categories.find((c) => c.uuid === revenue.categoryUuid)?.nome ?? "—";
-  const accountDesc = accounts.find((a) => a.uuid === revenue.accountUuid)?.description ?? "—";
+  const categoryNomeFallback =
+    categories.find((c) => c.uuid === revenue.categoryUuid)?.nome ?? "—";
+  const accountDescFallback =
+    accounts.find((a) => a.uuid === revenue.accountUuid)?.description ?? "—";
+  const tagLabel =
+    revenue.tag?.nome ??
+    (revenue.tagUuid ? tags.find((t) => t.uuid === revenue.tagUuid)?.nome ?? revenue.tagUuid : "—");
   const receivedLabel = revenue.wasReceived ? "Sim" : "Não";
 
   return (
@@ -94,12 +102,48 @@ export function ViewRevenueDrawerContent({ revenueUuid, onClose }: ViewRevenueDr
           <Input id="view-revenue-received" readOnly disabled value={receivedLabel} />
         </Field>
         <Field>
-          <FieldLabel htmlFor="view-revenue-account">Conta</FieldLabel>
-          <Input id="view-revenue-account" readOnly disabled value={accountDesc} />
+          <FieldLabel>Conta</FieldLabel>
+          {revenue.account ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/30 p-3">
+              <LogoSvgPreview
+                svg={revenue.account.bankLogoSvg}
+                className="h-12 w-20 shrink-0"
+                isIcon={false}
+              />
+              <div className="min-w-0">
+                <div className="text-sm font-medium text-foreground">{revenue.account.description}</div>
+                <div className="text-xs text-muted-foreground">
+                  {revenue.account.bankName} · {revenue.account.bankTypeName}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Input id="view-revenue-account" readOnly disabled value={accountDescFallback} />
+          )}
         </Field>
         <Field>
-          <FieldLabel htmlFor="view-revenue-category">Categoria</FieldLabel>
-          <Input id="view-revenue-category" readOnly disabled value={categoryNome} />
+          <FieldLabel>Categoria</FieldLabel>
+          {revenue.category ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/30 p-3">
+              <LogoSvgPreview
+                svg={revenue.category.logoSvg}
+                className="h-12 w-12 shrink-0"
+                isIcon={false}
+              />
+              <span className="text-sm font-medium text-foreground">{revenue.category.nome}</span>
+              <span
+                className="size-8 shrink-0 rounded-lg border border-border shadow-sm"
+                style={{ backgroundColor: revenue.category.colorHex }}
+                aria-hidden
+              />
+            </div>
+          ) : (
+            <Input id="view-revenue-category" readOnly disabled value={categoryNomeFallback} />
+          )}
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="view-revenue-tag">Tag</FieldLabel>
+          <Input id="view-revenue-tag" readOnly disabled value={tagLabel} />
         </Field>
         <Field>
           <FieldLabel htmlFor="view-revenue-notation">Anotação</FieldLabel>

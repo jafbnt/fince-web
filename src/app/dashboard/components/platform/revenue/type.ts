@@ -1,5 +1,26 @@
 import { z } from "zod";
 
+/** Categoria embutida no GET list (e opcionalmente em GET por uuid). */
+export type RevenueListCategory = {
+  nome: string;
+  logoSvg: string;
+  colorHex: string;
+};
+
+/** Conta embutida no GET list. */
+export type RevenueListAccount = {
+  description: string;
+  bankName: string;
+  bankLogoSvg: string;
+  bankTypeName: string;
+};
+
+/** Tag embutida quando existir. */
+export type RevenueListTag = {
+  nome: string;
+  uuid?: string;
+};
+
 /** Item retornado pelo GET list / GET por uuid / PATCH. */
 export type Revenue = {
   uuid: string;
@@ -7,8 +28,9 @@ export type Revenue = {
   wasReceived: boolean;
   dateReceipt: string;
   description: string;
-  categoryUuid: string;
-  accountUuid: string;
+  /** Presente quando a API envia só o resumo; no list atual pode faltar. */
+  categoryUuid?: string;
+  accountUuid?: string;
   ignoreTransaction: boolean;
   transactionUuid?: string | null;
   tagUuid?: string | null;
@@ -17,6 +39,9 @@ export type Revenue = {
   repeatEnabled: boolean;
   repeatCount: number;
   repeatInterval: string;
+  category?: RevenueListCategory | null;
+  account?: RevenueListAccount | null;
+  tag?: RevenueListTag | null;
 };
 
 export type CreateRevenuePayload = {
@@ -130,8 +155,8 @@ export function revenueToFormDefaults(r: Revenue): CreateRevenueFormValues {
     wasReceived: r.wasReceived,
     dateReceipt: isoToDateInputValue(r.dateReceipt),
     description: r.description,
-    categoryUuid: r.categoryUuid,
-    accountUuid: r.accountUuid,
+    categoryUuid: r.categoryUuid?.trim() ?? "",
+    accountUuid: r.accountUuid?.trim() ?? "",
     ignoreTransaction: r.ignoreTransaction,
     notation: r.notation,
     fixedExpense: r.fixedExpense,
@@ -139,4 +164,9 @@ export function revenueToFormDefaults(r: Revenue): CreateRevenueFormValues {
     repeatCount: r.repeatCount,
     repeatInterval: r.repeatInterval ?? "",
   };
+}
+
+/** List/edit precisa de UUIDs nos pickers: item do list sem eles deve disparar GET por uuid. */
+export function revenueNeedsDetailFetchForForm(r: Revenue): boolean {
+  return !r.categoryUuid?.trim() || !r.accountUuid?.trim();
 }

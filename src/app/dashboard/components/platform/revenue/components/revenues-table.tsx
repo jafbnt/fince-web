@@ -3,6 +3,7 @@ import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { LoadingCard } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { useDrawer } from "@/hooks/drawer/use";
+import { LogoSvgPreview } from "../../../system/logo/components/logo-svg-preview";
 import { useAccountStore } from "../../account/store";
 import { useCategoryStore } from "../../category/store";
 import { DeleteRevenueDialog } from "./delete-revenue-dialog";
@@ -58,7 +59,7 @@ export function RevenuesTable() {
         onConfirm={handleConfirmDelete}
       />
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[960px] border-collapse text-sm">
+        <table className="w-full min-w-[1040px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/40">
               <th className="px-3 py-3 text-left font-medium text-foreground">Descrição</th>
@@ -73,8 +74,12 @@ export function RevenuesTable() {
           <tbody>
             {revenues.map((row) => {
               const rowDeleting = loadingDeleteUuid === row.uuid;
-              const cat = categories.find((c) => c.uuid === row.categoryUuid);
-              const acc = accounts.find((a) => a.uuid === row.accountUuid);
+              const catFallback = row.categoryUuid
+                ? categories.find((c) => c.uuid === row.categoryUuid)
+                : undefined;
+              const accFallback = row.accountUuid
+                ? accounts.find((a) => a.uuid === row.accountUuid)
+                : undefined;
               return (
                 <tr
                   key={row.uuid}
@@ -87,11 +92,51 @@ export function RevenuesTable() {
                   <td className="px-3 py-3 text-muted-foreground">
                     {new Date(row.dateReceipt).toLocaleDateString("pt-BR")}
                   </td>
-                  <td className="max-w-[200px] truncate px-3 py-3 text-foreground">
-                    {acc?.description ?? "—"}
+                  <td className="max-w-[260px] px-3 py-3">
+                    {row.account ? (
+                      <div className="flex min-w-0 items-center gap-2">
+                        <LogoSvgPreview
+                          svg={row.account.bankLogoSvg}
+                          className="h-9 w-14 shrink-0"
+                          isIcon={false}
+                        />
+                        <div className="min-w-0">
+                          <div className="truncate font-medium text-foreground">
+                            {row.account.description}
+                          </div>
+                          <div className="truncate text-xs text-muted-foreground">
+                            {row.account.bankName} · {row.account.bankTypeName}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-foreground">{accFallback?.description ?? "—"}</span>
+                    )}
                   </td>
-                  <td className="max-w-[180px] truncate px-3 py-3 text-foreground">
-                    {cat?.nome ?? "—"}
+                  <td className="max-w-[min(224px,100%)] px-3 py-3">
+                    {row.category ? (
+                      <div
+                        className="inline-flex max-w-full min-w-0 items-center gap-1.5 rounded-xl border border-black/10 py-0.5 pl-1 pr-2 text-gray-700 shadow-sm dark:border-white/20 dark:text-white"
+                        style={{ backgroundColor: row.category.colorHex }}
+                        title={`${row.category.nome} (${row.category.colorHex})`}
+                      >
+                        <div
+                          className="flex size-7 shrink-0 items-center justify-center overflow-hidden"
+                          aria-hidden
+                        >
+                          <LogoSvgPreview
+                            svg={row.category.logoSvg}
+                            className="h-5 w-5 rounded-none p-0 [&_circle]:fill-gray-700! dark:[&_circle]:fill-white! [&_path]:fill-gray-700! dark:[&_path]:fill-white! [&_rect]:fill-gray-700! dark:[&_rect]:fill-white!"
+                            isIcon={false}
+                          />
+                        </div>
+                        <span className="min-w-0 truncate text-xs font-semibold tracking-tight">
+                          {row.category.nome}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-foreground">{catFallback?.nome ?? "—"}</span>
+                    )}
                   </td>
                   <td className="px-3 py-3 text-foreground">{row.wasReceived ? "Sim" : "Não"}</td>
                   <td className="px-3 py-3">
