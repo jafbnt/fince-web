@@ -19,9 +19,16 @@ export function SystemPageHeader({
         <h1 className="font-heading text-2xl font-semibold text-foreground">{title}</h1>
         <p className="text-muted-foreground">{description}</p>
       </div>
-      <Button type="button" variant="default" className="w-full shrink-0 sm:w-auto" onClick={() => onRegister?.()}>
-        {registerLabel}
-      </Button>
+      {onRegister ? (
+        <Button
+          type="button"
+          variant="default"
+          className="w-full shrink-0 sm:w-auto"
+          onClick={() => onRegister()}
+        >
+          {registerLabel}
+        </Button>
+      ) : null}
     </div>
   );
 }
