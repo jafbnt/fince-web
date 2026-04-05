@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioLinesIcon,
   BookOpenIcon,
@@ -12,18 +12,13 @@ import {
   Settings2Icon,
   TerminalIcon,
   TerminalSquareIcon,
-} from "lucide-react"
-import { NavMain } from "@/app/dashboard/components/nav-main"
-import { NavProjects } from "@/app/dashboard/components/nav-projects"
-import { NavUser } from "@/app/dashboard/components/nav-user"
-import { TeamSwitcher } from "@/app/dashboard/components/team-switcher"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar"
+} from "lucide-react";
+
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import { TeamSwitcher } from "./team-switcher";
+import { NavMain } from "./nav-main";
+import { NavProjects } from "./nav-projects";
+import { NavUser } from "./nav-user";
 
 const data = {
   user: {
@@ -86,11 +81,11 @@ const data = {
     { name: "Vendas e Marketing", url: "#", icon: <PieChartIcon /> },
     { name: "Viagens", url: "#", icon: <MapIcon /> },
   ],
-}
+};
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
-  onLogout: () => void
-}
+  onLogout: () => void;
+};
 
 export function AppSidebar({ onLogout, ...props }: AppSidebarProps) {
   return (
@@ -107,5 +102,5 @@ export function AppSidebar({ onLogout, ...props }: AppSidebarProps) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
