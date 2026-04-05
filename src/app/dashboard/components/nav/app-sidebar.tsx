@@ -5,10 +5,7 @@ import {
   AudioLinesIcon,
   BookOpenIcon,
   BotIcon,
-  FrameIcon,
   GalleryVerticalEndIcon,
-  MapIcon,
-  PieChartIcon,
   Settings2Icon,
   TerminalIcon,
   TerminalSquareIcon,
@@ -17,7 +14,7 @@ import {
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "./team-switcher";
 import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
+import { NavSystem } from "./nav-system";
 import { NavUser } from "./nav-user";
 
 const data = {
@@ -76,11 +73,6 @@ const data = {
       ],
     },
   ],
-  projects: [
-    { name: "Engenharia de Design", url: "#", icon: <FrameIcon /> },
-    { name: "Vendas e Marketing", url: "#", icon: <PieChartIcon /> },
-    { name: "Viagens", url: "#", icon: <MapIcon /> },
-  ],
 };
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
@@ -95,7 +87,7 @@ export function AppSidebar({ onLogout, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavSystem />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} onLogout={onLogout} />
