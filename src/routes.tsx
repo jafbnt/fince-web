@@ -6,6 +6,7 @@ import { DashboardLayout } from "@/app/dashboard";
 import { ColorSystemView } from "@/app/dashboard/components/system/color";
 import { LogoSystemView } from "@/app/dashboard/components/system/logo";
 import { AccountTypeSystemView } from "@/app/dashboard/components/system/account-type";
+import { FlagSystemView } from "@/app/dashboard/components/system/flag";
 
 function PublicOnlyRoute(): ReactElement {
   const token = useAuthStore((state) => state.token);
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
           },
           { path: "system/cores", element: createElement(ColorSystemView) },
           { path: "system/logos", element: createElement(LogoSystemView) },
+          { path: "system/bandeiras", element: createElement(FlagSystemView) },
           { path: "system/tipos-de-conta", element: createElement(AccountTypeSystemView) },
         ],
       },

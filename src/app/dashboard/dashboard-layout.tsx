@@ -17,6 +17,7 @@ const pathTitles: Record<string, string> = {
   "/dashboard": "Início",
   "/dashboard/system/cores": "Cores",
   "/dashboard/system/logos": "Logos",
+  "/dashboard/system/bandeiras": "Bandeiras",
   "/dashboard/system/tipos-de-conta": "Tipos de Conta",
 };
 
