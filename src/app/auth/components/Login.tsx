@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { loginSchema, type LoginFormValues } from "../types"
 
 type LoginProps = {
@@ -41,7 +42,7 @@ export function Login({ loading, apiError, onSubmit }: LoginProps) {
 
         <Field>
           <FieldLabel htmlFor="password">Senha</FieldLabel>
-          <Input id="password" type="password" {...register("password")} />
+          <PasswordInput id="password" autoComplete="current-password" {...register("password")} />
           <FieldError errors={[errors.password]} />
         </Field>
 

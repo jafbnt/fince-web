@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { ApiSuccess } from "@/lib/api-envelope";
 
 export const AUTH_TOKEN_STORAGE_KEY = "@fince:auth:token";
+export const AUTH_USER_STORAGE_KEY = "@fince:auth:user";
 
 export const loginSchema = z.object({
   login: z.string().min(3, "Informe um login válido"),

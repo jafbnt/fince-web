@@ -3,6 +3,7 @@
 import * as React from "react";
 import { AudioLinesIcon, GalleryVerticalEndIcon, TerminalIcon } from "lucide-react";
 
+import { useAuthStore } from "@/app/auth/store";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "./team-switcher";
 import { NavMain } from "./nav-main";
@@ -10,11 +11,6 @@ import { NavSystem } from "./nav-system";
 import { NavUser } from "./nav-user";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     { name: "Acme Inc", logo: <GalleryVerticalEndIcon />, plan: "Empresarial" },
     { name: "Acme Corp.", logo: <AudioLinesIcon />, plan: "Inicial" },
@@ -27,6 +23,8 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
 };
 
 export function AppSidebar({ onLogout, ...props }: AppSidebarProps) {
+  const user = useAuthStore((s) => s.user);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -37,7 +35,7 @@ export function AppSidebar({ onLogout, ...props }: AppSidebarProps) {
         <NavSystem />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} onLogout={onLogout} />
+        <NavUser user={user} onLogout={onLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

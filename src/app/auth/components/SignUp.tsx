@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { signUpSchema, type SignUpFormValues } from "../types"
 
 type SignUpProps = {
@@ -56,7 +57,7 @@ export function SignUp({ loading, apiError, onSubmit }: SignUpProps) {
 
         <Field>
           <FieldLabel htmlFor="password">Senha</FieldLabel>
-          <Input id="password" type="password" {...register("password")} />
+          <PasswordInput id="password" autoComplete="new-password" {...register("password")} />
           <FieldError errors={[errors.password]} />
         </Field>
 

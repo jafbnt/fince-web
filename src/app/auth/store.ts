@@ -2,13 +2,35 @@ import { create } from "zustand";
 import { ClientHttp } from "@/lib/client-http";
 import { getApiErrorMessage, isApiErrorEnvelope, isApiSuccess, type ApiErrorEnvelope } from "@/lib/api-envelope";
 import { showApiMessage } from "@/components/shared/show-api-message";
-import type { LoginFormValues, LoginSuccessBody, SignUpFormValues } from "./types";
-import { AUTH_TOKEN_STORAGE_KEY } from "./types";
+import type { AuthUser, LoginFormValues, LoginSuccessBody, SignUpFormValues } from "./types";
+import { AUTH_TOKEN_STORAGE_KEY, AUTH_USER_STORAGE_KEY } from "./types";
 
 const getInitialToken = (): string | null => localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
 
+function getInitialUser(): AuthUser | null {
+  try {
+    const raw = localStorage.getItem(AUTH_USER_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "uuid" in parsed &&
+      "email" in parsed &&
+      "login" in parsed &&
+      "fullName" in parsed
+    ) {
+      return parsed as AuthUser;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 type AuthStore = {
   token: string | null;
+  user: AuthUser | null;
   loadingLogin: boolean;
   loadingSignUp: boolean;
   errorLogin: string | null;
@@ -20,6 +42,7 @@ type AuthStore = {
 
 const defaultState = {
   token: getInitialToken(),
+  user: getInitialUser(),
   loadingLogin: false,
   loadingSignUp: false,
   errorLogin: null,
@@ -36,13 +59,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
       payload,
       (result: unknown) => {
         if (isApiSuccess<LoginSuccessBody>(result)) {
-          const token = result.body.token;
-          if (!token) {
+          const { token, user } = result.body;
+          if (!token || !user) {
             set({ errorLogin: "Resposta inválida do servidor." });
             return;
           }
           localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
-          set({ token, errorLogin: null });
+          localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user));
+          set({ token, user, errorLogin: null });
           showApiMessage(result, { successMessage: "Login realizado com sucesso!" });
           return;
         }
@@ -104,6 +128,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   logout: (): void => {
     localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
-    set({ token: null });
+    localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+    set({ token: null, user: null });
   },
 }));
