@@ -13,7 +13,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { ChevronRightIcon, TagsIcon } from "lucide-react"
+import { ChevronRightIcon, Tag as TagMenuIcon, TagsIcon } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 
 export function NavMain({
@@ -32,6 +32,7 @@ export function NavMain({
 }) {
   const { pathname } = useLocation()
   const categoriasActive = pathname === "/dashboard/platform/categorias"
+  const tagsActive = pathname === "/dashboard/platform/tags"
 
   return (
     <SidebarGroup>
@@ -42,6 +43,14 @@ export function NavMain({
             <Link to="/dashboard/platform/categorias">
               <TagsIcon className="size-4" />
               <span>Categorias</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Tags" isActive={tagsActive}>
+            <Link to="/dashboard/platform/tags">
+              <TagMenuIcon className="size-4" />
+              <span>Tags</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

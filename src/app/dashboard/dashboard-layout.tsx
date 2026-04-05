@@ -21,6 +21,7 @@ const pathTitles: Record<string, string> = {
   "/dashboard/system/bancos": "Bancos",
   "/dashboard/system/tipos-de-conta": "Tipos de Conta",
   "/dashboard/platform/categorias": "Categorias",
+  "/dashboard/platform/tags": "Tags",
 };
 
 function breadcrumbForPath(pathname: string): { parent?: string; current: string } {
