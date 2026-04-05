@@ -41,7 +41,7 @@ function formatAxisNumber(n: number): string {
 }
 
 type ChartRow = {
-  /** Ordem no eixo X (mais antigo → mais recente entre os últimos N). */
+  /** Ordem no eixo X: 1 = mais recente entre os últimos N, à direita os mais antigos. */
   seq: number;
   /** Texto completo para o tooltip. */
   description: string;
@@ -57,7 +57,7 @@ function toChartRows<T>(
   const sorted = [...items].sort(
     (a, b) => new Date(getDate(b)).getTime() - new Date(getDate(a)).getTime(),
   );
-  const slice = sorted.slice(0, RECENT_COUNT).reverse();
+  const slice = sorted.slice(0, RECENT_COUNT);
   return slice.map((item, i) => ({
     seq: i + 1,
     description: getDescription(item).trim() || "—",
