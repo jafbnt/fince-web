@@ -13,6 +13,7 @@ import { CreditCardsPlatformView } from "@/app/dashboard/components/platform/cre
 import { CreditCardExpensesPlatformView } from "@/app/dashboard/components/platform/credit-card-expenses";
 import { ExpensesPlatformView } from "@/app/dashboard/components/platform/expenses";
 import { RevenuePlatformView } from "@/app/dashboard/components/platform/revenue";
+import { TransactionsPlatformView } from "@/app/dashboard/components/platform/transactions";
 import { TagPlatformView } from "@/app/dashboard/components/platform/tag";
 import { FlagSystemView } from "@/app/dashboard/components/system/flag";
 
@@ -60,6 +61,7 @@ export const router = createBrowserRouter([
           { path: "system/bandeiras", element: createElement(FlagSystemView) },
           { path: "system/bancos", element: createElement(BankSystemView) },
           { path: "system/tipos-de-conta", element: createElement(AccountTypeSystemView) },
+          { path: "platform/transactions", element: createElement(TransactionsPlatformView) },
           { path: "platform/receitas", element: createElement(RevenuePlatformView) },
           { path: "platform/despesas", element: createElement(ExpensesPlatformView) },
           {

@@ -6,6 +6,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
+  ArrowLeftRightIcon,
   CircleDollarSignIcon,
   CreditCardIcon,
   Tag as TagMenuIcon,
@@ -17,6 +18,7 @@ import { Link, useLocation } from "react-router-dom";
 
 export function NavMain() {
   const { pathname } = useLocation();
+  const transacoesActive = pathname === "/dashboard/platform/transactions";
   const receitasActive = pathname === "/dashboard/platform/receitas";
   const despesasActive = pathname === "/dashboard/platform/despesas";
   const despesasCartaoActive = pathname === "/dashboard/platform/despesas-cartao";
@@ -29,6 +31,14 @@ export function NavMain() {
     <SidebarGroup>
       <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Transações" isActive={transacoesActive}>
+            <Link to="/dashboard/platform/transactions">
+              <ArrowLeftRightIcon className="size-4" />
+              <span>Transações</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Receitas" isActive={receitasActive}>
             <Link to="/dashboard/platform/receitas">
