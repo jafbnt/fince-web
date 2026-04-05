@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { LoadingCenter } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -118,11 +119,7 @@ export function EditAccountForm({
     banksCount > 0 && typesCount > 0 && colorsCount > 0 && logosCount > 0;
 
   if (!prefillReady) {
-    return (
-      <p className="text-sm text-muted-foreground" role="status">
-        Carregando…
-      </p>
-    );
+    return <LoadingCenter />;
   }
 
   if (prefillError) {

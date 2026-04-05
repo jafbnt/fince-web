@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LoadingCenter } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -74,11 +75,7 @@ export function ViewAccountDrawerContent({ accountUuid, onClose }: ViewAccountDr
   const color = account ? colors.find((c) => c.uuid === account.colorUuid) : undefined;
 
   if (loading) {
-    return (
-      <p className="text-sm text-muted-foreground" role="status">
-        Carregando…
-      </p>
-    );
+    return <LoadingCenter />;
   }
 
   if (!account) {

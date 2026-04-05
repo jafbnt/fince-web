@@ -1,5 +1,6 @@
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form";
 import { useEffect } from "react";
+import { PickerLoading } from "@/components/spinner";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { useColorStore } from "../../../system/color/store";
@@ -38,7 +39,7 @@ export function ColorPickerField<T extends FieldValues>({
         <Field>
           <FieldLabel htmlFor={id}>{label}</FieldLabel>
           {loadingColors && colors.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Carregando cores…</p>
+            <PickerLoading />
           ) : colors.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Nenhuma cor cadastrada. Cadastre em Sistema → Cores.

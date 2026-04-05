@@ -1,5 +1,6 @@
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form";
 import { useEffect } from "react";
+import { PickerLoading } from "@/components/spinner";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { LogoSvgPreview } from "../../logo/components/logo-svg-preview";
@@ -39,7 +40,7 @@ export function LogoPickerField<T extends FieldValues>({
         <Field>
           <FieldLabel htmlFor={id}>{label}</FieldLabel>
           {loadingLogos && logos.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Carregando logos…</p>
+            <PickerLoading />
           ) : logos.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Nenhum logo cadastrado. Cadastre um logo em Sistema → Logos.

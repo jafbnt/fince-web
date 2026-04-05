@@ -1,5 +1,6 @@
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form";
 import { useEffect } from "react";
+import { PickerLoading } from "@/components/spinner";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { useBankStore } from "../../../system/bank/store";
@@ -51,7 +52,7 @@ export function BankPickerField<T extends FieldValues>({
         <Field>
           <FieldLabel htmlFor={id}>{label}</FieldLabel>
           {(loadingBanks && banks.length === 0) || (loadingLogos && logos.length === 0) ? (
-            <p className="text-sm text-muted-foreground">Carregando bancos…</p>
+            <PickerLoading />
           ) : banks.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Nenhum banco cadastrado. Cadastre em Sistema → Bancos.

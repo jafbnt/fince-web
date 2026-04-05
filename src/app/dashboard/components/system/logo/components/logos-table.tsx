@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { LoadingCard } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { useDrawer } from "@/hooks/drawer/use";
 import { useLogoStore } from "../store";
@@ -32,11 +33,7 @@ export function LogosTable() {
   };
 
   if (loadingList && logos.length === 0) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Carregando logos…
-      </div>
-    );
+    return <LoadingCard />;
   }
 
   if (!loadingList && logos.length === 0) {

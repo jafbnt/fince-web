@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { LoadingCard } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { useDrawer } from "@/hooks/drawer/use";
 import { useBankStore } from "../../../system/bank/store";
@@ -53,11 +54,7 @@ export function AccountsTable() {
   };
 
   if (loadingList && accounts.length === 0) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Carregando contas…
-      </div>
-    );
+    return <LoadingCard />;
   }
 
   if (!loadingList && accounts.length === 0) {

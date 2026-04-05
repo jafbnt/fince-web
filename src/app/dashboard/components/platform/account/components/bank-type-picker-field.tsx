@@ -1,5 +1,6 @@
 import { Controller, type Control, type FieldPath, type FieldValues } from "react-hook-form";
 import { useEffect } from "react";
+import { PickerLoading } from "@/components/spinner";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { useAccountTypeStore } from "../../../system/account-type/store";
@@ -52,7 +53,7 @@ export function BankTypePickerField<T extends FieldValues>({
         <Field>
           <FieldLabel htmlFor={id}>{label}</FieldLabel>
           {(loadingTypes && accountTypes.length === 0) || (loadingLogos && logos.length === 0) ? (
-            <p className="text-sm text-muted-foreground">Carregando tipos de conta…</p>
+            <PickerLoading />
           ) : accountTypes.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Nenhum tipo de conta cadastrado. Cadastre em Sistema → Tipos de Conta.

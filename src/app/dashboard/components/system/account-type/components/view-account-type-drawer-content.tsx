@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LoadingCenter } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -47,11 +48,7 @@ export function ViewAccountTypeDrawerContent({
   const linkedLogo = accountType ? logos.find((l) => l.uuid === accountType.logoUuid) : undefined;
 
   if (loading) {
-    return (
-      <p className="text-sm text-muted-foreground" role="status">
-        Carregando…
-      </p>
-    );
+    return <LoadingCenter />;
   }
 
   if (!accountType) {

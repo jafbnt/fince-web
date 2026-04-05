@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { LoadingCard } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { useDrawer } from "@/hooks/drawer/use";
 import { LogoSvgPreview } from "../../logo/components/logo-svg-preview";
@@ -30,11 +31,7 @@ export function AccountTypesTable() {
   const resolveLogo = (logoUuid: string) => logos.find((l) => l.uuid === logoUuid);
 
   if (loadingList && accountTypes.length === 0) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Carregando tipos de conta…
-      </div>
-    );
+    return <LoadingCard />;
   }
 
   if (!loadingList && accountTypes.length === 0) {
