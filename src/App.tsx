@@ -1,14 +1,8 @@
-import { Navigate, Route, Routes } from "react-router-dom"
-import { AuthView } from "./app/auth"
+import { RouterProvider } from "react-router-dom"
+import { router } from "./routes"
 
 function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<AuthView />} />
-      <Route path="/signup" element={<AuthView />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App

@@ -53,7 +53,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ loadingSignUp: true, errorSignUp: null });
 
     await new ClientHttp().post<AuthRegisterResponse, HttpErrorDefault, SignUpFormValues>(
-      "/auth/register",
+      "/api/auth/register",
       payload,
       () => {
         set({ errorSignUp: null });
