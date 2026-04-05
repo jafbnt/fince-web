@@ -1,15 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioLinesIcon,
-  BookOpenIcon,
-  BotIcon,
-  GalleryVerticalEndIcon,
-  Settings2Icon,
-  TerminalIcon,
-  TerminalSquareIcon,
-} from "lucide-react";
+import { AudioLinesIcon, GalleryVerticalEndIcon, TerminalIcon } from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import { TeamSwitcher } from "./team-switcher";
@@ -28,51 +20,6 @@ const data = {
     { name: "Acme Corp.", logo: <AudioLinesIcon />, plan: "Inicial" },
     { name: "Evil Corp.", logo: <TerminalIcon />, plan: "Gratuito" },
   ],
-  navMain: [
-    {
-      title: "Laboratório",
-      url: "#",
-      icon: <TerminalSquareIcon />,
-      isActive: true,
-      items: [
-        { title: "Histórico", url: "#" },
-        { title: "Favoritos", url: "#" },
-        { title: "Configurações", url: "#" },
-      ],
-    },
-    {
-      title: "Modelos",
-      url: "#",
-      icon: <BotIcon />,
-      items: [
-        { title: "Genesis", url: "#" },
-        { title: "Explorer", url: "#" },
-        { title: "Quantum", url: "#" },
-      ],
-    },
-    {
-      title: "Documentação",
-      url: "#",
-      icon: <BookOpenIcon />,
-      items: [
-        { title: "Introdução", url: "#" },
-        { title: "Comece Aqui", url: "#" },
-        { title: "Tutoriais", url: "#" },
-        { title: "Registro de Mudanças", url: "#" },
-      ],
-    },
-    {
-      title: "Configurações",
-      url: "#",
-      icon: <Settings2Icon />,
-      items: [
-        { title: "Geral", url: "#" },
-        { title: "Equipe", url: "#" },
-        { title: "Faturamento", url: "#" },
-        { title: "Limites", url: "#" },
-      ],
-    },
-  ],
 };
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
@@ -86,7 +33,7 @@ export function AppSidebar({ onLogout, ...props }: AppSidebarProps) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain />
         <NavSystem />
       </SidebarContent>
       <SidebarFooter>
