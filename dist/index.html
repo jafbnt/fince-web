@@ -1,12 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR" suppresshydrationwarning="true">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      try {
+        const t = localStorage.getItem("theme");
+        const isDark =
+          t === "dark" ||
+          ((t === "system" || !t) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", isDark);
+      } catch (_) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>fince</title>
-    <script type="module" crossorigin src="/assets/index-DvYSdsoL.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-cMJ_Opw6.css">
+    <script type="module" crossorigin src="/assets/index-BUfp4FIv.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CTpsjD93.css">
   </head>
   <body>
     <div id="root"></div>

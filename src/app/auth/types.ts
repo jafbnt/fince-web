@@ -1,11 +1,13 @@
-import { z } from "zod"
+import { z } from "zod";
 
-export const AUTH_TOKEN_STORAGE_KEY = "@fince:auth:token"
+import type { ApiSuccess } from "@/lib/api-envelope";
+
+export const AUTH_TOKEN_STORAGE_KEY = "@fince:auth:token";
 
 export const loginSchema = z.object({
   login: z.string().min(3, "Informe um login válido"),
   password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
-})
+});
 
 export const signUpSchema = z.object({
   email: z.email("Informe um e-mail válido"),
@@ -13,31 +15,30 @@ export const signUpSchema = z.object({
   fullName: z.string().min(3, "Informe o nome completo"),
   password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
   phone: z.string().min(10, "Informe um telefone válido"),
-})
+});
 
-export type LoginFormValues = z.infer<typeof loginSchema>
-export type SignUpFormValues = z.infer<typeof signUpSchema>
+export type LoginFormValues = z.infer<typeof loginSchema>;
+export type SignUpFormValues = z.infer<typeof signUpSchema>;
 
-export type AuthLoginResponse = {
-  token?: string
-  accessToken?: string
-}
+export type AuthUser = {
+  uuid: string;
+  email: string;
+  login: string;
+  fullName: string;
+  createdAt: string;
+  updatedAt: string;
+  phone: string;
+};
 
-export type AuthRegisterResponse = {
-  message?: string
-}
+export type LoginSuccessBody = {
+  user: AuthUser;
+  token: string;
+};
 
-export type HttpErrorDefault = {
-  message?: string
-}
+export type AuthLoginResponse = ApiSuccess<LoginSuccessBody>;
 
-export type AuthStore = {
-  token: string | null
-  loadingLogin: boolean
-  loadingSignUp: boolean
-  errorLogin: string | null
-  errorSignUp: string | null
-  login: (payload: LoginFormValues) => Promise<void>
-  signUp: (payload: SignUpFormValues) => Promise<void>
-  logout: () => void
-}
+export type RegisterSuccessBody = {
+  message?: string;
+};
+
+export type AuthRegisterResponse = ApiSuccess<RegisterSuccessBody>;

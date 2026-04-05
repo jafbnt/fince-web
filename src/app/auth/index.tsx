@@ -24,7 +24,7 @@ export function AuthView({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "dark flex min-h-screen items-center justify-center bg-background px-4 py-6 text-foreground md:px-6",
+        "flex min-h-screen items-center justify-center bg-background px-4 py-6 text-foreground md:px-6",
         className,
       )}
       {...props}
@@ -39,7 +39,7 @@ export function AuthView({ className, ...props }: React.ComponentProps<"div">) {
             )}
             {showSidePanel ? (
               <div className="relative hidden border-l border-border bg-muted md:flex">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,oklch(0.768_0.233_130.85/0.18),transparent_60%)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in_oklch,var(--primary)_18%,transparent),transparent_60%)]" />
                 <div className="relative z-10 m-auto rounded-4xl border border-border p-5 text-muted-foreground">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
