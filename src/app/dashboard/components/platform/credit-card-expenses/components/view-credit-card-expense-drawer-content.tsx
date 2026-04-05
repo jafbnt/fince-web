@@ -10,7 +10,12 @@ import { useCategoryStore } from "../../category/store";
 import { useTagStore } from "../../tag/store";
 import { EditCreditCardExpenseForm } from "./edit-credit-card-expense-form";
 import { useCreditCardExpenseStore } from "../store";
-import { apiInvoiceDateToMonthValue, ccExpenseAmountToReais, type CreditCardExpense } from "../type";
+import {
+  ccExpenseAmountToReais,
+  formatInstallmentOptionLabel,
+  formatInvoiceDateForDisplay,
+  type CreditCardExpense,
+} from "../type";
 
 type ViewCreditCardExpenseDrawerContentProps = {
   expenseUuid: string;
@@ -19,13 +24,6 @@ type ViewCreditCardExpenseDrawerContentProps = {
 
 function formatBrl(reais: number): string {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(reais);
-}
-
-function formatInvoiceMonthLabel(api: string): string {
-  const m = apiInvoiceDateToMonthValue(api);
-  if (!m) return "—";
-  const [y, mo] = m.split("-");
-  return `${mo}/${y}`;
 }
 
 export function ViewCreditCardExpenseDrawerContent({
@@ -86,6 +84,8 @@ export function ViewCreditCardExpenseDrawerContent({
   const tagNome = expense.tagUuid
     ? (tags.find((t) => t.uuid === expense.tagUuid)?.nome ?? expense.tagUuid)
     : "—";
+  const totalReais = ccExpenseAmountToReais(expense.amount);
+  const inst = expense.installments ?? 1;
 
   return (
     <div className="flex flex-col gap-4">
@@ -113,8 +113,13 @@ export function ViewCreditCardExpenseDrawerContent({
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="view-cc-expense-invoice">Mês da fatura</FieldLabel>
-          <Input id="view-cc-expense-invoice" readOnly disabled value={formatInvoiceMonthLabel(expense.invoiceDate)} />
+          <FieldLabel htmlFor="view-cc-expense-invoice">Data da fatura</FieldLabel>
+          <Input
+            id="view-cc-expense-invoice"
+            readOnly
+            disabled
+            value={formatInvoiceDateForDisplay(expense.invoiceDate)}
+          />
         </Field>
         <Field>
           <FieldLabel htmlFor="view-cc-expense-card">Cartão</FieldLabel>
@@ -142,45 +147,27 @@ export function ViewCreditCardExpenseDrawerContent({
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="view-cc-expense-fixed">Despesa fixa</FieldLabel>
+          <FieldLabel htmlFor="view-cc-expense-recorrente">Recorrente</FieldLabel>
           <Input
-            id="view-cc-expense-fixed"
+            id="view-cc-expense-recorrente"
             readOnly
             disabled
             value={expense.fixedExpense ? "Sim" : "Não"}
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="view-cc-expense-repeat-en">Repetição</FieldLabel>
+          <FieldLabel htmlFor="view-cc-expense-installments">Parcelas</FieldLabel>
           <Input
-            id="view-cc-expense-repeat-en"
+            id="view-cc-expense-installments"
             readOnly
             disabled
-            value={expense.repeatEnabled ? "Sim" : "Não"}
+            value={
+              expense.fixedExpense
+                ? "—"
+                : formatInstallmentOptionLabel(inst, totalReais)
+            }
           />
         </Field>
-        {expense.repeatEnabled ? (
-          <>
-            <Field>
-              <FieldLabel htmlFor="view-cc-expense-repeat-count">Quantidade</FieldLabel>
-              <Input
-                id="view-cc-expense-repeat-count"
-                readOnly
-                disabled
-                value={String(expense.repeatCount)}
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="view-cc-expense-repeat-int">Intervalo</FieldLabel>
-              <Input
-                id="view-cc-expense-repeat-int"
-                readOnly
-                disabled
-                value={expense.repeatInterval || "—"}
-              />
-            </Field>
-          </>
-        ) : null}
       </FieldGroup>
       <div className="flex justify-end pt-2">
         <Button type="button" onClick={() => setMode("edit")}>

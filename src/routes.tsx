@@ -9,6 +9,7 @@ import { AccountTypeSystemView } from "@/app/dashboard/components/system/account
 import { BankSystemView } from "@/app/dashboard/components/system/bank";
 import { AccountPlatformView } from "@/app/dashboard/components/platform/account";
 import { CategoryPlatformView } from "@/app/dashboard/components/platform/category";
+import { CreditCardsPlatformView } from "@/app/dashboard/components/platform/credit-card";
 import { CreditCardExpensesPlatformView } from "@/app/dashboard/components/platform/credit-card-expenses";
 import { ExpensesPlatformView } from "@/app/dashboard/components/platform/expenses";
 import { RevenuePlatformView } from "@/app/dashboard/components/platform/revenue";
@@ -66,6 +67,7 @@ export const router = createBrowserRouter([
             element: createElement(CreditCardExpensesPlatformView),
           },
           { path: "platform/contas", element: createElement(AccountPlatformView) },
+          { path: "platform/cartoes-credito", element: createElement(CreditCardsPlatformView) },
           { path: "platform/categorias", element: createElement(CategoryPlatformView) },
           { path: "platform/tags", element: createElement(TagPlatformView) },
         ],

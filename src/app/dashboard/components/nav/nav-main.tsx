@@ -21,6 +21,7 @@ export function NavMain() {
   const despesasActive = pathname === "/dashboard/platform/despesas";
   const despesasCartaoActive = pathname === "/dashboard/platform/despesas-cartao";
   const contasActive = pathname === "/dashboard/platform/contas";
+  const cartoesCreditoActive = pathname === "/dashboard/platform/cartoes-credito";
   const categoriasActive = pathname === "/dashboard/platform/categorias";
   const tagsActive = pathname === "/dashboard/platform/tags";
 
@@ -61,6 +62,14 @@ export function NavMain() {
             <Link to="/dashboard/platform/contas">
               <WalletIcon className="size-4" />
               <span>Contas</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Cartões de crédito" isActive={cartoesCreditoActive}>
+            <Link to="/dashboard/platform/cartoes-credito">
+              <CreditCardIcon className="size-4" />
+              <span>Cartões de crédito</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { BrlCentsBalanceInput } from "../../account/components/brl-cents-balance-input";
 import { CategoryPickerField } from "../../revenue/components/category-picker-field";
 import { useCategoryStore } from "../../category/store";
@@ -13,6 +14,8 @@ import { TagPickerField } from "../../expenses/components/tag-picker-field";
 import { useCreditCardExpenseStore } from "../store";
 import {
   createCreditCardExpenseSchema,
+  CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS,
+  formatInstallmentOptionLabel,
   type CreateCreditCardExpenseFormValues,
   formValuesToCreditCardExpensePayload,
 } from "../type";
@@ -24,10 +27,11 @@ function defaultDateInputValue(): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-function defaultMonthInputValue(): string {
+/** Primeiro dia do mês atual (padrão comum para data de fatura). */
+function defaultInvoiceDateInputValue(): string {
   const d = new Date();
   const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}`;
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-01`;
 }
 
 type CreateCreditCardExpenseFormProps = {
@@ -51,6 +55,7 @@ export function CreateCreditCardExpenseForm({ onSuccess }: CreateCreditCardExpen
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<CreateCreditCardExpenseFormValues>({
     resolver: zodResolver(createCreditCardExpenseSchema),
@@ -60,18 +65,31 @@ export function CreateCreditCardExpenseForm({ onSuccess }: CreateCreditCardExpen
       description: "",
       categoryUuid: "",
       creditCardUuid: "",
-      invoiceDate: defaultMonthInputValue(),
+      invoiceDate: defaultInvoiceDateInputValue(),
       tagUuid: "",
       ignoreTransaction: true,
       notation: "",
       fixedExpense: false,
-      repeatEnabled: false,
-      repeatCount: 0,
-      repeatInterval: "",
+      installments: 1,
     },
   });
 
-  const repeatEnabled = watch("repeatEnabled");
+  const fixedExpense = watch("fixedExpense");
+  const amount = watch("amount");
+  const showInstallments =
+    !fixedExpense && Number.isFinite(amount) && amount > 0;
+
+  useEffect(() => {
+    if (fixedExpense) {
+      setValue("installments", 1);
+    }
+  }, [fixedExpense, setValue]);
+
+  useEffect(() => {
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setValue("installments", 1);
+    }
+  }, [amount, setValue]);
 
   const onSubmit = async (values: CreateCreditCardExpenseFormValues): Promise<void> => {
     const ok = await createCreditCardExpense(formValuesToCreditCardExpensePayload(values));
@@ -82,14 +100,12 @@ export function CreateCreditCardExpenseForm({ onSuccess }: CreateCreditCardExpen
         description: "",
         categoryUuid: "",
         creditCardUuid: "",
-        invoiceDate: defaultMonthInputValue(),
+        invoiceDate: defaultInvoiceDateInputValue(),
         tagUuid: "",
         ignoreTransaction: true,
         notation: "",
         fixedExpense: false,
-        repeatEnabled: false,
-        repeatCount: 0,
-        repeatInterval: "",
+        installments: 1,
       });
       onSuccess?.();
     }
@@ -128,8 +144,8 @@ export function CreateCreditCardExpenseForm({ onSuccess }: CreateCreditCardExpen
           <FieldError errors={[errors.datePaid]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor="cc-expense-invoice-month">Mês da fatura</FieldLabel>
-          <Input id="cc-expense-invoice-month" type="month" {...register("invoiceDate")} />
+          <FieldLabel htmlFor="cc-expense-invoice-date">Data da fatura</FieldLabel>
+          <Input id="cc-expense-invoice-date" type="date" {...register("invoiceDate")} />
           <FieldError errors={[errors.invoiceDate]} />
         </Field>
         <CreditCardPickerField control={control} name="creditCardUuid" id="create-cc-expense-card" />
@@ -167,63 +183,58 @@ export function CreateCreditCardExpenseForm({ onSuccess }: CreateCreditCardExpen
             <Field>
               <div className="flex items-center gap-3 rounded-2xl border border-border bg-input/30 px-3 py-3">
                 <input
-                  id="cc-expense-fixed"
+                  id="cc-expense-recorrente"
                   type="checkbox"
                   className="size-4 rounded border-border accent-primary"
                   checked={field.value}
                   onChange={(e) => field.onChange(e.target.checked)}
                 />
-                <label htmlFor="cc-expense-fixed" className="text-sm font-medium">
-                  Despesa fixa
+                <label htmlFor="cc-expense-recorrente" className="text-sm font-medium">
+                  Recorrente
                 </label>
               </div>
             </Field>
           )}
         />
-        <Controller
-          control={control}
-          name="repeatEnabled"
-          render={({ field }) => (
-            <Field>
-              <div className="flex items-center gap-3 rounded-2xl border border-border bg-input/30 px-3 py-3">
-                <input
-                  id="cc-expense-repeat"
-                  type="checkbox"
-                  className="size-4 rounded border-border accent-primary"
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                />
-                <label htmlFor="cc-expense-repeat" className="text-sm font-medium">
-                  Repetição habilitada
-                </label>
-              </div>
-            </Field>
-          )}
-        />
-        {repeatEnabled ? (
-          <>
-            <Field>
-              <FieldLabel htmlFor="cc-expense-repeat-count">Quantidade de repetições</FieldLabel>
-              <Input
-                id="cc-expense-repeat-count"
-                type="number"
-                min={0}
-                step={1}
-                {...register("repeatCount", { valueAsNumber: true })}
-              />
-              <FieldError errors={[errors.repeatCount]} />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="cc-expense-repeat-interval">Intervalo</FieldLabel>
-              <Input
-                id="cc-expense-repeat-interval"
-                placeholder="ex. monthly, weekly"
-                autoComplete="off"
-                {...register("repeatInterval")}
-              />
-              <FieldError errors={[errors.repeatInterval]} />
-            </Field>
-          </>
+        {showInstallments ? (
+          <Controller
+            control={control}
+            name="installments"
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel id="cc-expense-installments-label">Parcelas</FieldLabel>
+                <div
+                  id="cc-expense-installments"
+                  role="listbox"
+                  aria-labelledby="cc-expense-installments-label"
+                  className="max-h-52 overflow-y-auto rounded-3xl border border-border bg-input/30 p-2"
+                >
+                  {Array.from({ length: CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS }, (_, i) => i + 1).map(
+                    (n) => {
+                      const selected = field.value === n;
+                      return (
+                        <button
+                          key={n}
+                          type="button"
+                          role="option"
+                          aria-selected={selected}
+                          onClick={() => field.onChange(n)}
+                          className={cn(
+                            "flex w-full rounded-2xl px-3 py-2 text-left text-sm transition-colors",
+                            "hover:bg-muted/80",
+                            selected && "bg-muted ring-1 ring-ring/40",
+                          )}
+                        >
+                          {formatInstallmentOptionLabel(n, amount)}
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
+                <FieldError errors={fieldState.error ? [fieldState.error] : []} />
+              </Field>
+            )}
+          />
         ) : null}
         {errorCreate ? <FieldError>{errorCreate}</FieldError> : null}
         <div className="flex flex-wrap justify-end gap-2 pt-2">

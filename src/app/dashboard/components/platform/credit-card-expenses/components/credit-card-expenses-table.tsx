@@ -11,17 +11,15 @@ import { DeleteCreditCardExpenseDialog } from "./delete-credit-card-expense-dial
 import { EditCreditCardExpenseForm } from "./edit-credit-card-expense-form";
 import { ViewCreditCardExpenseDrawerContent } from "./view-credit-card-expense-drawer-content";
 import { useCreditCardExpenseStore } from "../store";
-import { apiInvoiceDateToMonthValue, ccExpenseAmountToReais, type CreditCardExpense } from "../type";
+import {
+  ccExpenseAmountToReais,
+  formatInstallmentOptionLabel,
+  formatInvoiceDateForDisplay,
+  type CreditCardExpense,
+} from "../type";
 
 function formatBrl(reais: number): string {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(reais);
-}
-
-function formatInvoiceMonthLabel(api: string): string {
-  const m = apiInvoiceDateToMonthValue(api);
-  if (!m) return "—";
-  const [y, mo] = m.split("-");
-  return `${mo}/${y}`;
 }
 
 export function CreditCardExpensesTable() {
@@ -68,13 +66,14 @@ export function CreditCardExpensesTable() {
         onConfirm={handleConfirmDelete}
       />
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[1080px] border-collapse text-sm">
+        <table className="w-full min-w-[1220px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/40">
               <th className="px-3 py-3 text-left font-medium text-foreground">Descrição</th>
               <th className="px-3 py-3 text-left font-medium text-foreground">Valor</th>
+              <th className="px-3 py-3 text-left font-medium text-foreground">Parcelas</th>
               <th className="px-3 py-3 text-left font-medium text-foreground">Pagamento</th>
-              <th className="px-3 py-3 text-left font-medium text-foreground">Fatura</th>
+              <th className="px-3 py-3 text-left font-medium text-foreground">Data fatura</th>
               <th className="px-3 py-3 text-left font-medium text-foreground">Cartão</th>
               <th className="px-3 py-3 text-left font-medium text-foreground">Categoria</th>
               <th className="px-3 py-3 text-left font-medium text-foreground">Tag</th>
@@ -96,10 +95,17 @@ export function CreditCardExpensesTable() {
                   <td className="px-3 py-3 tabular-nums text-foreground">
                     {formatBrl(ccExpenseAmountToReais(row.amount))}
                   </td>
+                  <td className="max-w-[200px] truncate px-3 py-3 text-muted-foreground">
+                    {row.fixedExpense
+                      ? "—"
+                      : formatInstallmentOptionLabel(row.installments ?? 1, ccExpenseAmountToReais(row.amount))}
+                  </td>
                   <td className="px-3 py-3 text-muted-foreground">
                     {new Date(row.datePaid).toLocaleDateString("pt-BR")}
                   </td>
-                  <td className="px-3 py-3 text-muted-foreground">{formatInvoiceMonthLabel(row.invoiceDate)}</td>
+                  <td className="px-3 py-3 text-muted-foreground">
+                    {formatInvoiceDateForDisplay(row.invoiceDate)}
+                  </td>
                   <td className="max-w-[160px] truncate px-3 py-3 text-foreground">
                     {card ? creditCardLabel(card) : "—"}
                   </td>

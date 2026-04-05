@@ -7,6 +7,8 @@ import {
 
 export { ccExpenseAmountToReais };
 
+export const CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS = 12;
+
 export type CreditCardExpense = {
   uuid: string;
   amount: string | number;
@@ -19,9 +21,7 @@ export type CreditCardExpense = {
   tagUuid?: string | null;
   notation: string;
   fixedExpense: boolean;
-  repeatEnabled: boolean;
-  repeatCount: number;
-  repeatInterval: string;
+  installments?: number;
 };
 
 export type CreateCreditCardExpensePayload = {
@@ -30,55 +30,84 @@ export type CreateCreditCardExpensePayload = {
   description: string;
   categoryUuid: string;
   creditCardUuid: string;
+  /** API: `yyyy-MM-dd` (ex.: `"2026-05-01"`). */
   invoiceDate: string;
   ignoreTransaction: boolean;
   tagUuid: string | null;
   notation: string;
   fixedExpense: boolean;
-  repeatEnabled: boolean;
-  repeatCount: number;
-  repeatInterval: string;
+  installments: number;
 };
 
 export type UpdateCreditCardExpensePayload = CreateCreditCardExpensePayload;
 
-/** Converte mês do input (yyyy-MM) em ISO do primeiro dia (UTC), ou repassa string já completa. */
-export function invoiceMonthToIso(monthYyyyMm: string): string {
-  const t = monthYyyyMm.trim();
-  if (/^\d{4}-\d{2}$/.test(t)) {
-    return dateInputToIsoUtcDate(`${t}-01`);
-  }
-  return t;
+/**
+ * Resposta API (`yyyy-MM-dd` ou ISO) → valor para `<input type="date">`.
+ */
+export function apiInvoiceDateToDateInputValue(api: string): string {
+  const s = api.trim();
+  const m = /^(\d{4})-(\d{2})-(\d{2})(?:[T\s]|$)/.exec(s);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  return isoToDateInputValue(s);
 }
 
-/** Resposta API → valor para `<input type="month">`. */
-export function apiInvoiceDateToMonthValue(api: string): string {
+/**
+ * `<input type="date">` → `yyyy-MM-dd` para create/update (igual ao GET list).
+ */
+export function invoiceDateFormToApiPayload(dateStr: string): string {
+  const t = dateStr.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+  const parsed = isoToDateInputValue(t);
+  return /^\d{4}-\d{2}-\d{2}$/.test(parsed) ? parsed : t;
+}
+
+/** Exibição pt-BR da data da fatura (API `yyyy-MM-dd` ou ISO). */
+export function formatInvoiceDateForDisplay(api: string): string {
   const s = api.trim();
-  if (/^\d{4}-\d{2}$/.test(s)) return s;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if (m) {
+    const [, y, mo, day] = m;
+    return `${day}/${mo}/${y}`;
+  }
   const d = new Date(s);
-  if (Number.isNaN(d.getTime())) return "";
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}`;
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+}
+
+const brlFmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+/** Rótulo para opção de parcelas (valor total em reais no formulário). */
+export function formatInstallmentOptionLabel(installmentCount: number, amountReais: number): string {
+  if (!Number.isFinite(amountReais) || amountReais <= 0) {
+    return `${installmentCount}x`;
+  }
+  const per = amountReais / installmentCount;
+  return `${installmentCount} x ${brlFmt.format(per)}`;
 }
 
 export function formValuesToCreditCardExpensePayload(
   values: CreateCreditCardExpenseFormValues,
 ): CreateCreditCardExpensePayload {
   const tag = values.tagUuid.trim();
+  const installments =
+    values.fixedExpense || !(Number.isFinite(values.amount) && values.amount > 0)
+      ? 1
+      : values.installments;
   return {
     amount: Number(values.amount),
     datePaid: dateInputToIsoUtcDate(values.datePaid),
     description: values.description.trim(),
     categoryUuid: values.categoryUuid,
     creditCardUuid: values.creditCardUuid,
-    invoiceDate: invoiceMonthToIso(values.invoiceDate),
+    invoiceDate: invoiceDateFormToApiPayload(values.invoiceDate),
     ignoreTransaction: values.ignoreTransaction,
     tagUuid: tag ? tag : null,
     notation: values.notation.trim(),
     fixedExpense: values.fixedExpense,
-    repeatEnabled: values.repeatEnabled,
-    repeatCount: values.repeatCount,
-    repeatInterval: values.repeatInterval.trim(),
+    installments: Math.min(
+      CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS,
+      Math.max(1, Math.trunc(installments)),
+    ),
   };
 }
 
@@ -89,26 +118,31 @@ export const createCreditCardExpenseSchema = z
     description: z.string().min(1, "Informe a descrição"),
     categoryUuid: z.string().min(1, "Selecione uma categoria"),
     creditCardUuid: z.string().min(1, "Selecione um cartão"),
-    invoiceDate: z.string().min(1, "Informe o mês da fatura"),
+    invoiceDate: z.string().min(1, "Informe a data da fatura"),
     tagUuid: z.string(),
     ignoreTransaction: z.boolean(),
     notation: z.string(),
     fixedExpense: z.boolean(),
-    repeatEnabled: z.boolean(),
-    repeatCount: z.number().int().min(0, "Quantidade inválida"),
-    repeatInterval: z.string(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.repeatEnabled && !data.repeatInterval.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Informe o intervalo (ex.: monthly, weekly)",
-        path: ["repeatInterval"],
-      });
-    }
+    installments: z
+      .number()
+      .int()
+      .min(1, "Parcelas entre 1 e 12")
+      .max(CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS, "Parcelas entre 1 e 12"),
   });
 
 export type CreateCreditCardExpenseFormValues = z.infer<typeof createCreditCardExpenseSchema>;
+
+function normalizeInstallmentsFromApi(e: CreditCardExpense): number {
+  const n = e.installments;
+  if (typeof n === "number" && Number.isInteger(n) && n >= 1 && n <= CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS) {
+    return n;
+  }
+  if (typeof n === "string") {
+    const v = parseInt(n, 10);
+    if (Number.isInteger(v) && v >= 1 && v <= CREDIT_CARD_EXPENSE_MAX_INSTALLMENTS) return v;
+  }
+  return 1;
+}
 
 export function creditCardExpenseToFormDefaults(
   e: CreditCardExpense,
@@ -119,13 +153,11 @@ export function creditCardExpenseToFormDefaults(
     description: e.description,
     categoryUuid: e.categoryUuid,
     creditCardUuid: e.creditCardUuid,
-    invoiceDate: apiInvoiceDateToMonthValue(e.invoiceDate),
+    invoiceDate: apiInvoiceDateToDateInputValue(e.invoiceDate),
     tagUuid: e.tagUuid?.trim() ?? "",
     ignoreTransaction: e.ignoreTransaction,
     notation: e.notation,
     fixedExpense: e.fixedExpense,
-    repeatEnabled: e.repeatEnabled,
-    repeatCount: e.repeatCount,
-    repeatInterval: e.repeatInterval ?? "",
+    installments: normalizeInstallmentsFromApi(e),
   };
 }
